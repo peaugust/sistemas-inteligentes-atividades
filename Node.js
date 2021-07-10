@@ -6,10 +6,15 @@ export const createNode = (state, parent, operator, depth, cost) => {
 
 export const expandNode = (node) => {
   const expandedNodes = []
+  const mirrorMoves = { UP: 'DOWN', DOWN: 'UP', LEFT: 'RIGHT', RIGHT: 'LEFT' }
+
   expandedNodes.push(createNode(moveUp(node.state), node, 'UP', node.depth + 1, 0))
   expandedNodes.push(createNode(moveDown(node.state), node, 'DOWN', node.depth + 1, 0))
   expandedNodes.push(createNode(moveLeft(node.state), node, 'LEFT', node.depth + 1, 0))
   expandedNodes.push(createNode(moveRight(node.state), node, 'RIGHT', node.depth + 1, 0))
 
-  return expandedNodes.filter((node) => node.state !== null)
+  if (node.operator !== null) {
+    return expandedNodes.filter((expandedNode) => expandedNode.state !== null && expandedNode.operator !== mirrorMoves[node.operator])
+  }
+  return expandedNodes.filter((expandedNode) => expandedNode.state !== null)
 }

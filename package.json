@@ -1,5 +1,8 @@
 {
   "name": "atividade-1",
   "version": "1.0.0",
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "test": "node index.js"
+  }
 }
