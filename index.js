@@ -107,8 +107,6 @@ const aStar = (startState, goalState) => {
 }
 
 // let board = generateNewBoard()
-// uniformCost(board, goalState)
-// aStar(board, goalState)
 
 uniformCost([4, 1, 3, 7, 2, 5, 8, ' ', 6], goalState)
 aStar([4, 1, 3, 7, 2, 5, 8, ' ', 6], goalState)
