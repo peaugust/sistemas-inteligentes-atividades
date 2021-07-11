@@ -45,7 +45,6 @@ const uniformCost = (startState, goalState) => {
   fringe.push(startNode)
   let greaterFringeSize = fringe.length
   let current = fringe.shift()
-  let iteration = 0
   while (!current.state.equals(goalState)) {
     const temp = expandNode(current)
     expanded += temp.length
@@ -58,7 +57,6 @@ const uniformCost = (startState, goalState) => {
     if (fringe.length > greaterFringeSize) greaterFringeSize = fringe.length
     visited.push(current)
     current = fringe.shift()
-    iteration++
   }
 
   let statesToSolution = []
@@ -76,11 +74,83 @@ const uniformCost = (startState, goalState) => {
   console.log(`Deepest level expanded: ${deepestExpanded}\n`)
 
   console.log(`Path size: ${path.length} \n Path: ${path} \n`)
-  for (const state of statesToSolution) {
-    displayBoard(state)
-  }
+  // for (const state of statesToSolution) {
+  //   displayBoard(state)
+  // }
 }
 
+console.log('Uniform Cost \n')
+console.time()
 uniformCost([4, 1, 3, 7, 2, 5, 8, ' ', 6], goalState)
+console.timeEnd()
+console.time()
 uniformCost([1, ' ', 2, 5, 7, 3, 4, 8, 6], goalState)
-uniformCost([7, 4, 8, ' ', 5, 2, 1, 3, 6], goalState)
+console.timeEnd()
+console.log('--------------------------------------\n')
+// uniformCost([7, 4, 8, ' ', 5, 2, 1, 3, 6], goalState)
+
+const getHeuristic = (state, goal) => {
+  let distanceToMatch = 0
+  for (let i = 0; i < 10; i += 1) {
+    if (state.state[i] != goal[i]) {
+      distanceToMatch += 1
+    }
+  }
+  state.heuristic = distanceToMatch
+}
+
+const aStar = (startState, goalState) => {
+  const startNode = createNode(startState, null, null, 0, 0)
+  let fringe = []
+  let visited = []
+  let expanded = 0
+  let deepestExpanded = 0
+  const path = []
+  fringe.push(startNode)
+  let greaterFringeSize = fringe.length
+  let current = fringe.shift()
+  while (!current.state.equals(goalState)) {
+    const temp = expandNode(current)
+    expanded += temp.length
+    fringe.push(...temp)
+    for (let node of fringe) {
+      getHeuristic(node, goalState)
+      node.heuristic += node.depth
+      if (deepestExpanded < node.depth) deepestExpanded = node.depth
+    }
+    fringe = fringe.sort((nodeA, nodeB) => nodeA.heuristic < nodeB.heuristic)
+    if (fringe.length > greaterFringeSize) greaterFringeSize = fringe.length
+    visited.push(current)
+    current = fringe.shift()
+  }
+
+  let statesToSolution = []
+  while (current != null) {
+    if (current.operator != null) {
+      statesToSolution.unshift(current.state)
+      path.unshift(current.operator)
+    }
+    current = current.parent
+  }
+
+  console.log(`Number of visited nodes: ${visited.length}\n`)
+  console.log(`Number of expanded nodes: ${expanded}\n`)
+  console.log(`Greater fringe size: ${greaterFringeSize}\n`)
+  console.log(`Deepest level expanded: ${deepestExpanded}\n`)
+
+  console.log(`Path size: ${path.length} \n Path: ${path} \n`)
+  // for (const state of statesToSolution) {
+  //   displayBoard(state)
+  // }
+}
+
+console.log('A * \n')
+console.time()
+aStar([4, 1, 3, 7, 2, 5, 8, ' ', 6], goalState)
+console.timeEnd()
+console.time()
+aStar([1, ' ', 2, 5, 7, 3, 4, 8, 6], goalState)
+console.timeEnd()
+console.log('--------------------------------------\n')
+
+// aStar([7, 4, 8, ' ', 5, 2, 1, 3, 6], goalState)
