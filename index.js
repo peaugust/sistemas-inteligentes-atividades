@@ -38,41 +38,49 @@ const displayBoard = (state) => {
 const uniformCost = (startState, goalState) => {
   const startNode = createNode(startState, null, null, 0, 0)
   let fringe = []
+  let visited = []
+  let expanded = 0
+  let deepestExpanded = 0
   const path = []
   fringe.push(startNode)
+  let greaterFringeSize = fringe.length
   let current = fringe.shift()
   let iteration = 0
-  console.log()
   while (!current.state.equals(goalState)) {
-    console.log(`Iteration: ${iteration}`)
-    console.log(`current: ${displayBoard(current.state)}`)
     const temp = expandNode(current)
+    expanded += temp.length
     for (let node of temp) {
-      console.log(`node in loop: ${displayBoard(node.state)}`)
       node.depth += current.depth
+      if (deepestExpanded < node.depth) deepestExpanded = node.depth
       fringe.push(node)
     }
     fringe = fringe.sort((nodeA, nodeB) => nodeA.depth < nodeB.depth)
-    console.log('Fringe: ', fringe, '\n')
+    if (fringe.length > greaterFringeSize) greaterFringeSize = fringe.length
+    visited.push(current)
     current = fringe.shift()
     iteration++
-    console.log('\n\n')
   }
-  console.log('xanfs', current, displayBoard(current.state))
-  let table = []
+
+  let statesToSolution = []
   while (current != null) {
-    console.log(current)
-    displayBoard(current.state)
     if (current.operator != null) {
-      table.unshift(current.state)
+      statesToSolution.unshift(current.state)
       path.unshift(current.operator)
     }
     current = current.parent
   }
-  console.log(path)
-  for (const item of table) {
-    displayBoard(item)
+
+  console.log(`Number of visited nodes: ${visited.length}\n`)
+  console.log(`Number of expanded nodes: ${expanded}\n`)
+  console.log(`Greater fringe size: ${greaterFringeSize}\n`)
+  console.log(`Deepest level expanded: ${deepestExpanded}\n`)
+
+  console.log(`Path size: ${path.length} \n Path: ${path} \n`)
+  for (const state of statesToSolution) {
+    displayBoard(state)
   }
 }
 
-uniformCost([1, 2, 3, 4, 5, 6, ' ', 7, 8], goalState)
+uniformCost([4, 1, 3, 7, 2, 5, 8, ' ', 6], goalState)
+uniformCost([1, ' ', 2, 5, 7, 3, 4, 8, 6], goalState)
+uniformCost([7, 4, 8, ' ', 5, 2, 1, 3, 6], goalState)
