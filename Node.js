@@ -4,7 +4,7 @@ export const createNode = (state, parent, operator, depth, cost) => {
   return { state, parent, operator, depth, cost }
 }
 
-export const expandNode = (node) => {
+export const expandNode = (node, visitedNodes) => {
   const expandedNodes = []
   const mirrorMoves = { UP: 'DOWN', DOWN: 'UP', LEFT: 'RIGHT', RIGHT: 'LEFT' }
 
@@ -13,8 +13,15 @@ export const expandNode = (node) => {
   expandedNodes.push(createNode(moveLeft(node.state), node, 'LEFT', node.depth + 1, 0))
   expandedNodes.push(createNode(moveRight(node.state), node, 'RIGHT', node.depth + 1, 0))
 
+  let filteredNodes = []
+
   if (node.operator !== null) {
-    return expandedNodes.filter((expandedNode) => expandedNode.state !== null && expandedNode.operator !== mirrorMoves[node.operator])
+    filteredNodes = expandedNodes.filter((expandedNode) => expandedNode.state !== null && expandedNode.operator !== mirrorMoves[node.operator])
+  } else {
+    filteredNodes = expandedNodes.filter((expandedNode) => expandedNode.state !== null)
   }
-  return expandedNodes.filter((expandedNode) => expandedNode.state !== null)
+
+  visitedNodes.map((visited) => (filteredNodes = filteredNodes.filter((filtered) => !filtered.state.equals(visited.state))))
+
+  return filteredNodes
 }

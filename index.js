@@ -16,7 +16,7 @@ const uniformCost = (startState, goalState) => {
   let greaterFringeSize = fringe.length
   let current = fringe.shift()
   while (!current.state.equals(goalState)) {
-    const temp = expandNode(current)
+    const temp = expandNode(current, visited)
     expanded += temp.length
     for (let node of temp) {
       node.depth += current.depth
@@ -72,7 +72,7 @@ const aStar = (startState, goalState) => {
   let greaterFringeSize = fringe.length
   let current = fringe.shift()
   while (!current.state.equals(goalState)) {
-    const temp = expandNode(current)
+    const temp = expandNode(current, visited)
     expanded += temp.length
     fringe.push(...temp)
     for (let node of fringe) {
@@ -106,6 +106,9 @@ const aStar = (startState, goalState) => {
   }
 }
 
-let board = generateNewBoard()
-uniformCost(board, goalState)
-aStar(board, goalState)
+// let board = generateNewBoard()
+// uniformCost(board, goalState)
+// aStar(board, goalState)
+
+uniformCost([4, 1, 3, 7, 2, 5, 8, ' ', 6], goalState)
+aStar([4, 1, 3, 7, 2, 5, 8, ' ', 6], goalState)
